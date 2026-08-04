@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "archivo": "app.html",
   "fecha": "2026-08-04",
-  "notas": "Calendario con vistas mes y semana, panel de detalle en todas las vistas, carga masiva por CSV con plantillas y autoactualizacion desde este repositorio."
+  "notas": "Interfaz movil tipo app nativa: menu inferior, barra superior propia, filas como fichas, asistentes a pantalla completa y calendario compacto."
 }
