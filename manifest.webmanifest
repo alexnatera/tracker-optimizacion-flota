@@ -1,0 +1,55 @@
+{
+  "name": "Tracker de Optimizacion de Flota",
+  "short_name": "Tracker Flota",
+  "description": "Portafolio de optimizacion, radar por pais, carga del equipo y planificacion de viajes.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#0d2340",
+  "theme_color": "#0d2340",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Resumen",
+      "url": "./index.html#dashboard"
+    },
+    {
+      "name": "Portafolio",
+      "url": "./index.html#portafolio"
+    },
+    {
+      "name": "Calendario de visitas",
+      "url": "./index.html#visitas"
+    }
+  ]
+}
