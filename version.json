@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
+  "version": "1.4.1",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "Iconos de modulo con color propio, animaciones de transicion en paneles y menu inferior, numero de version visible en la barra lateral y superior."
+  "notas": "Se declara color-scheme light/dark explicito para evitar que Chrome/Android fuerce su propio modo oscuro y apague los colores de los iconos y tarjetas."
 }
