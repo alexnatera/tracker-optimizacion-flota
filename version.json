@@ -1,6 +1,6 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "Se declara color-scheme light/dark explicito para evitar que Chrome/Android fuerce su propio modo oscuro y apague los colores de los iconos y tarjetas."
+  "notas": "Se agrega la etiqueta del rol/persona a las celdas de porcentaje de participacion de la Matriz en la vista movil (antes salian sin etiqueta a la izquierda)."
 }
