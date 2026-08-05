@@ -1,5 +1,5 @@
 /* Service worker del Tracker de Optimizacion de Flota */
-const VERSION = '1.4.2';
+const VERSION = '1.5.1';
 const CACHE = 'tracker-' + VERSION;
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
