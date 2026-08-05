@@ -1,6 +1,6 @@
 {
-  "version": "1.5.1",
+  "version": "1.5.2",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "Renombrada a OPTRACKER con icono de progreso propio. Cuentas solo las crea el admin (se quito el autorregistro). Notificaciones de asignacion y menciones (@nombre) con aviso local en el dispositivo."
+  "notas": "La barra de estado (conexion, guardado, sincronizar) ya no requiere scroll horizontal en movil: se acomoda en varias lineas."
 }
