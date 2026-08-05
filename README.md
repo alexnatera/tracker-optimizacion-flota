@@ -1,4 +1,4 @@
-# Tracker de Optimizacion de Flota
+# OPTRACKER
 
 Portafolio de optimizacion, radar por pais, carga del equipo y planificacion de viajes.
 Los datos viven en Supabase. La misma interfaz se adapta a escritorio y a telefono.
