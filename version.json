@@ -1,6 +1,6 @@
 {
-  "version": "1.4.2",
+  "version": "1.5.1",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "Se agrega la etiqueta del rol/persona a las celdas de porcentaje de participacion de la Matriz en la vista movil (antes salian sin etiqueta a la izquierda)."
+  "notas": "Renombrada a OPTRACKER con icono de progreso propio. Cuentas solo las crea el admin (se quito el autorregistro). Notificaciones de asignacion y menciones (@nombre) con aviso local en el dispositivo."
 }
