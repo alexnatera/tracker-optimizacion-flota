@@ -1,6 +1,6 @@
 {
-  "version": "1.5.2",
+  "version": "1.5.3",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "La barra de estado (conexion, guardado, sincronizar) ya no requiere scroll horizontal en movil: se acomoda en varias lineas."
+  "notas": "La pantalla de carga de datos ahora cubre toda la pantalla para que nunca se solape con la barra de estado si la conexion tarda o falla."
 }
