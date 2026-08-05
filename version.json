@@ -1,6 +1,6 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "archivo": "app.html",
   "fecha": "2026-08-05",
-  "notas": "Navegacion movil rediseñada: 4 pestañas principales + hoja Más con el resto de modulos, etiquetas cortas, fichas de tabla mas claras."
+  "notas": "Iconos de modulo con color propio, animaciones de transicion en paneles y menu inferior, numero de version visible en la barra lateral y superior."
 }
