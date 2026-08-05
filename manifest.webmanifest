@@ -1,6 +1,6 @@
 {
-  "name": "Tracker de Optimizacion de Flota",
-  "short_name": "Tracker Flota",
+  "name": "OPTRACKER",
+  "short_name": "OPTRACKER",
   "description": "Portafolio de optimizacion, radar por pais, carga del equipo y planificacion de viajes.",
   "start_url": "./index.html",
   "scope": "./",
