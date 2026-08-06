@@ -2,3 +2,10 @@
 *.csv
 *.pdf
 .DS_Store
+
+# dependencias y artefactos de test
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
