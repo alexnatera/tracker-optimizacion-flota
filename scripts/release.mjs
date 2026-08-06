@@ -52,6 +52,20 @@ function versionDeServiceWorker() {
   return m[1];
 }
 
+
+/**
+ * Version incrustada DENTRO del bundle (const VERSION = "x.y.z").
+ * Es la tercera copia de la version y la mas facil de olvidar: si queda
+ * atras, la app se ve desactualizada a si misma, aplica la version nueva,
+ * recarga, se vuelve a ver desactualizada... y entra en bucle infinito.
+ * Paso de verdad en la v1.6.0.
+ */
+function versionDeBundle(ruta, nombre) {
+  const m = leer(ruta).match(/const\s+VERSION\s*=\s*\\?"(\d+\.\d+\.\d+)\\?"/);
+  if (!m) throw new Error(`No se encontro la constante VERSION dentro de ${nombre}`);
+  return m[1];
+}
+
 /**
  * app.html e index.html son un bundle generado por una herramienta
  * externa, no se reescriben aca. Lo unico que se verifica es que ambos
@@ -106,6 +120,20 @@ function check() {
 
   problemas.push(...revisarBundles());
 
+  // La version vive en 4 lugares. Todos tienen que decir lo mismo.
+  for (const [nombre, ruta] of [['app.html', APP_HTML], ['index.html', INDEX_HTML]]) {
+    if (!existsSync(ruta)) continue;
+    try {
+      const vBundle = versionDeBundle(ruta, nombre);
+      if (vBundle !== vManifiesto) {
+        problemas.push(
+          `desincronizado: version.json dice ${vManifiesto} pero la constante VERSION dentro de ${nombre} dice ${vBundle}. ` +
+          `La app entraria en bucle de recarga: se ve desactualizada, aplica la version nueva, recarga y vuelve a verse desactualizada.`
+        );
+      }
+    } catch (err) { problemas.push(err.message); }
+  }
+
   if (problemas.length) {
     console.error(rojo('\n  Version desincronizada. No se publica.\n'));
     for (const p of problemas) console.error(rojo(`  - ${p}`));
@@ -144,9 +172,21 @@ function set(nuevaVersion, notas) {
   );
   writeFileSync(SW_JS, sw);
 
+  // Tercera y cuarta copia: la constante dentro de cada bundle.
+  for (const [nombre, ruta] of [['app.html', APP_HTML], ['index.html', INDEX_HTML]]) {
+    if (!existsSync(ruta)) continue;
+    const antes = leer(ruta);
+    const despues = antes.replace(/(const\s+VERSION\s*=\s*\\?")(\d+\.\d+\.\d+)(\\?")/, `$1${nuevaVersion}$3`);
+    if (antes === despues) {
+      console.error(rojo(`  No se pudo actualizar la constante VERSION dentro de ${nombre}. Revisalo a mano.`));
+      process.exit(1);
+    }
+    writeFileSync(ruta, despues);
+  }
+
   console.log(verde(`\n  ${anterior} -> ${nuevaVersion}`));
-  console.log(gris('  Actualizados: version.json, sw.js'));
-  console.log(gris('  Falta: reemplazar app.html e index.html con el bundle nuevo\n'));
+  console.log(gris('  Actualizados: version.json, sw.js, y la constante VERSION dentro de app.html e index.html'));
+  console.log(gris('  Verifica con: node scripts/release.mjs check\n'));
 }
 
 function bump(parte) {
