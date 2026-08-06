@@ -50,6 +50,10 @@
     {
       "name": "Calendario de visitas",
       "url": "./index.html#visitas"
+    },
+    {
+      "name": "Mejora continua",
+      "url": "./mejora-continua.html"
     }
   ]
 }

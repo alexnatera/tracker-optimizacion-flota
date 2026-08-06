@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d2340">
+<title>Mejora continua · OPTRACKER</title>
+<style>
+  :root{
+    --bg:#0d2340; --bg2:#123056; --card:#16385f; --line:#254977;
+    --gold:#c99a3c; --text:#eaf0fa; --muted:#93a9c8;
+    --crit:#e5484d; --alto:#f2a33c; --medio:#e3c53c; --bajo:#4caf7d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  a{color:var(--gold)}
+  header{position:sticky;top:0;z-index:20;background:var(--bg2);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:600}
+  header .sub{color:var(--muted);font-size:12px}
+  header .spacer{flex:1}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:7px 12px}
+  button.primary{background:var(--gold);color:#1a1200;border-color:var(--gold);font-weight:600}
+  button.ghost{background:transparent}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  input,select,textarea{font:inherit;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  .hidden{display:none !important}
+
+  #login{max-width:340px;margin:12vh auto;padding:24px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+  #login h1{font-size:18px;margin:0 0 4px}
+  #login p{color:var(--muted);margin:0 0 16px;font-size:12.5px}
+  #loginErr{color:var(--crit);font-size:12.5px;min-height:16px;margin-top:8px}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+  .kpi{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .kpi b{display:block;font-size:20px}
+  .kpi span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .kpi.warn b{color:var(--alto)}
+
+  .board{display:grid;grid-auto-flow:column;grid-auto-columns:260px;gap:12px;overflow-x:auto;padding-bottom:8px}
+  .col{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px;min-height:120px}
+  .col h3{font-size:12px;margin:2px 4px 8px;display:flex;justify-content:space-between;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .col h3 em{background:var(--line);color:var(--text);border-radius:20px;padding:1px 8px;font-style:normal}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;cursor:pointer}
+  .card:hover{border-color:var(--gold)}
+  .card .cod{font-size:11px;color:var(--muted)}
+  .card .tit{font-size:13px;margin:2px 0 6px;font-weight:600}
+  .badge{display:inline-block;border-radius:20px;padding:1px 8px;font-size:10.5px;margin:0 4px 4px 0;border:1px solid var(--line)}
+  .badge.crit{color:var(--crit);border-color:var(--crit)}
+  .badge.alto{color:var(--alto);border-color:var(--alto)}
+  .badge.medio{color:var(--medio);border-color:var(--medio)}
+  .badge.bajo{color:var(--bajo);border-color:var(--bajo)}
+  .badge.vencido{background:var(--crit);color:#fff;border-color:var(--crit)}
+  .badge.sug{color:var(--gold);border-color:var(--gold)}
+
+  .overlay{position:fixed;inset:0;background:rgba(4,10,22,.6);display:flex;align-items:flex-start;justify-content:center;padding:5vh 12px;overflow:auto;z-index:50}
+  .modal{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px;max-width:560px;width:100%}
+  .modal h2{margin:0 0 4px;font-size:16px}
+  .modal .hint{color:var(--muted);font-size:12px;margin-bottom:6px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+  .assist{margin-top:10px;padding:10px 12px;border-radius:10px;background:#20305a;border:1px dashed var(--gold);font-size:12.5px}
+  .assist b{color:var(--gold)}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+  .steps button{flex:1;font-size:12px}
+  .steps button.on{background:var(--gold);color:#1a1200;border-color:var(--gold)}
+  .about{color:var(--muted);font-size:12px;line-height:1.6;margin-top:6px}
+
+  @media (max-width:760px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .board{grid-auto-columns:82vw}
+    .row2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>Mejora continua</h1>
+  <p>Asistente Lean / Six Sigma de OPTRACKER. Iniciá sesión con tu cuenta del tracker.</p>
+  <label>Correo</label>
+  <input id="loginEmail" type="email" autocomplete="username">
+  <label>Contraseña</label>
+  <input id="loginPass" type="password" autocomplete="current-password">
+  <div id="loginErr"></div>
+  <div class="actions">
+    <button class="primary" id="btnLogin" style="width:100%">Entrar</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1>🧭 Mejora continua</h1>
+    <span class="sub">OPTRACKER · asistente Lean / Six Sigma</span>
+    <div class="spacer"></div>
+    <a href="./index.html">← Volver al tracker</a>
+    <span class="sub" id="whoami"></span>
+    <button class="ghost" id="btnLogout">Salir</button>
+  </header>
+
+  <div class="wrap">
+    <p class="about">
+      Cada problema reportado (bug, cuello de botella, tarea manual repetida, dato que se
+      pierde) entra acá y recorre las cinco fases DMAIC — <b>Definir → Medir → Analizar →
+      Mejorar → Controlar</b> — hasta cerrarse. Al guardar, el sistema sugiere solo qué tipo
+      de desperdicio Lean parece ser (defecto, espera, sobreproceso, etc.) según el texto del
+      reporte; la persona confirma o corrige la clasificación. No se puede pasar a "Mejorar"
+      sin causa raíz documentada, ni cerrar sin una acción de control — así el asistente obliga
+      a razonar la mejora en vez de solo marcar "resuelto".
+    </p>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <b style="font-size:13px">Tablero DMAIC</b>
+      <button class="primary" id="btnNuevo">+ Reportar problema</button>
+    </div>
+
+    <div class="board" id="board"></div>
+  </div>
+</div>
+
+<div id="modalNuevo" class="overlay hidden">
+  <div class="modal">
+    <h2>Reportar problema</h2>
+    <div class="hint">Fase inicial: Definir. El código y la fecha objetivo se generan solos.</div>
+    <label>Título</label>
+    <input id="fTitulo" maxlength="140" placeholder="Ej.: el panel de notificaciones no carga en móvil">
+    <label>Descripción</label>
+    <textarea id="fDescripcion" rows="4" placeholder="Qué pasó, dónde, desde cuándo, a quién afecta"></textarea>
+    <div class="row2">
+      <div>
+        <label>Módulo donde se detectó</label>
+        <select id="fModulo"></select>
+      </div>
+      <div>
+        <label>Severidad</label>
+        <select id="fSeveridad"></select>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="ghost" id="cancelNuevo">Cancelar</button>
+      <button class="primary" id="guardarNuevo">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modalDetalle" class="overlay hidden">
+  <div class="modal" style="max-width:640px">
+    <h2 id="dTitulo"></h2>
+    <div class="hint" id="dCodigo"></div>
+
+    <div id="dAssist" class="assist hidden"></div>
+
+    <div class="row2">
+      <div>
+        <label>Severidad</label>
+        <select id="dSeveridad"></select>
+      </div>
+      <div>
+        <label>Desperdicio Lean (confirmado)</label>
+        <select id="dDesperdicio"><option value="">— sin clasificar —</option></select>
+      </div>
+    </div>
+
+    <label>Impacto medido (fase Medir)</label>
+    <input id="dImpacto" placeholder="Ej.: 3 usuarios/semana, 40 min perdidos por caso">
+
+    <div class="row2">
+      <div>
+        <label>Método de análisis</label>
+        <select id="dMetodo"><option value="">—</option></select>
+      </div>
+      <div>
+        <label>Vencimiento</label>
+        <input id="dFechaObjetivo" type="date">
+      </div>
+    </div>
+
+    <label>Causa raíz (fase Analizar) — obligatoria para pasar a Mejorar</label>
+    <textarea id="dCausa" rows="2"></textarea>
+
+    <label>Acción de mejora (fase Mejorar)</label>
+    <textarea id="dAccionMejora" rows="2"></textarea>
+
+    <label>Acción de control (fase Controlar) — obligatoria para Cerrar</label>
+    <textarea id="dAccionControl" rows="2" placeholder="Cómo evitamos que vuelva a pasar: test, script, checklist, política"></textarea>
+
+    <label><input type="checkbox" id="dReincidente" style="width:auto;vertical-align:middle;margin-right:6px">Es reincidencia de un problema anterior</label>
+
+    <label>Enlace (commit, capture, hilo)</label>
+    <input id="dEnlace" placeholder="https://…">
+
+    <div class="steps" id="dPasos"></div>
+
+    <div class="actions">
+      <button class="ghost" id="cerrarDetalle">Cerrar sin guardar</button>
+      <button class="primary" id="guardarDetalle">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL = "https://wdflkqsiompjpyrihske.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkZmxrcXNpb21wanB5cmloc2tlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3ODMyMzUsImV4cCI6MjEwMTM1OTIzNX0.qbtXlKCvzMjt8kTMilukJlckmX4tXNpeGkj3M9LROEA";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let listas = { estado_mejora:[], severidad_mejora:[], desperdicio_lean:[], metodo_raiz:[], modulo_app:[] };
+let casos = [];
+let puedeEditar = false;
+let casoActivo = null;
+
+const $ = (id) => document.getElementById(id);
+const sevClass = (s) => s === 'Crítico' ? 'crit' : s === 'Alto' ? 'alto' : s === 'Bajo' ? 'bajo' : 'medio';
+const hoy = () => new Date().toISOString().slice(0,10);
+
+async function boot(){
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) return afterLogin();
+  $('btnLogin').addEventListener('click', doLogin);
+  $('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+}
+
+async function doLogin(){
+  $('loginErr').textContent = '';
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPass').value;
+  if (!email || !password) { $('loginErr').textContent = 'Completá correo y contraseña.'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { $('loginErr').textContent = 'No se pudo iniciar sesión: ' + error.message; return; }
+  afterLogin();
+}
+
+async function afterLogin(){
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+  $('btnNuevo').addEventListener('click', abrirNuevo);
+  $('cancelNuevo').addEventListener('click', () => $('modalNuevo').classList.add('hidden'));
+  $('guardarNuevo').addEventListener('click', guardarNuevo);
+  $('cerrarDetalle').addEventListener('click', () => $('modalDetalle').classList.add('hidden'));
+  $('guardarDetalle').addEventListener('click', guardarDetalle);
+
+  const { data: { user } } = await sb.auth.getUser();
+  const { data: perfil } = await sb.from('usuarios').select('nombre,email,rol').eq('id', user.id).maybeSingle();
+  puedeEditar = !!perfil && (perfil.rol === 'admin' || perfil.rol === 'editor');
+  $('whoami').textContent = (perfil?.nombre || perfil?.email || '') + ' · ' + (perfil?.rol || '');
+  $('btnNuevo').disabled = !puedeEditar;
+
+  await cargarListas();
+  await cargarTodo();
+}
+
+async function cargarListas(){
+  const { data } = await sb.from('config_listas')
+    .select('tipo,valor,orden,avance')
+    .in('tipo', Object.keys(listas))
+    .eq('activo', true)
+    .order('orden');
+  (data || []).forEach(r => listas[r.tipo]?.push(r));
+
+  fillSelect('fModulo', listas.modulo_app.map(x => x.valor));
+  fillSelect('fSeveridad', listas.severidad_mejora.map(x => x.valor), 'Medio');
+  fillSelect('dSeveridad', listas.severidad_mejora.map(x => x.valor));
+  fillSelect('dMetodo', listas.metodo_raiz.map(x => x.valor), null, true);
+  const dDesp = $('dDesperdicio');
+  listas.desperdicio_lean.forEach(x => { const o = document.createElement('option'); o.value = x.valor; o.textContent = x.valor; dDesp.appendChild(o); });
+}
+
+function fillSelect(id, values, def, keepFirst){
+  const el = $(id);
+  const startIdx = keepFirst ? 1 : 0;
+  while (el.options.length > startIdx) el.remove(startIdx);
+  values.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; if (v === def) o.selected = true; el.appendChild(o); });
+}
+
+async function cargarTodo(){
+  await Promise.all([cargarKPIs(), cargarCasos()]);
+}
+
+async function cargarKPIs(){
+  const { data } = await sb.from('v_mejora_continua_kpis').select('*').maybeSingle();
+  const k = data || {};
+  const items = [
+    ['Abiertos', k.abiertos ?? 0, false],
+    ['Vencidos', k.vencidos ?? 0, (k.vencidos ?? 0) > 0],
+    ['Cerrados', k.cerrados ?? 0, false],
+    ['% reincidencia', (k.pct_reincidencia ?? 0) + '%', (k.pct_reincidencia ?? 0) > 15],
+    ['Ciclo promedio', (k.ciclo_promedio_dias ?? '—') + (k.ciclo_promedio_dias != null ? ' d' : ''), false],
+  ];
+  $('kpis').innerHTML = items.map(([label, val, warn]) =>
+    `<div class="kpi${warn ? ' warn':''}"><b>${val}</b><span>${label}</span></div>`).join('');
+}
+
+async function cargarCasos(){
+  const { data, error } = await sb.from('mejora_continua').select('*').order('fecha_reporte', { ascending:false });
+  casos = data || [];
+  renderBoard();
+}
+
+function renderBoard(){
+  const board = $('board');
+  board.innerHTML = '';
+  listas.estado_mejora.forEach(fase => {
+    const col = document.createElement('div');
+    col.className = 'col';
+    const items = casos.filter(c => c.estado === fase.valor);
+    col.innerHTML = `<h3>${fase.valor} <em>${items.length}</em></h3>`;
+    items.forEach(c => col.appendChild(renderCard(c)));
+    board.appendChild(col);
+  });
+}
+
+function renderCard(c){
+  const div = document.createElement('div');
+  div.className = 'card';
+  const vencido = c.fecha_objetivo && c.fecha_objetivo < hoy() && c.estado !== 'Cerrado';
+  div.innerHTML = `
+    <div class="cod">${c.codigo || '—'}</div>
+    <div class="tit">${escapeHtml(c.titulo)}</div>
+    <span class="badge ${sevClass(c.severidad)}">${c.severidad}</span>
+    ${c.tipo_desperdicio ? `<span class="badge sug">${c.tipo_desperdicio}</span>` : (c.sugerencia_desperdicio ? `<span class="badge sug">sugerido: ${c.sugerencia_desperdicio}</span>` : '')}
+    ${vencido ? `<span class="badge vencido">vencido</span>` : ''}
+  `;
+  div.addEventListener('click', () => abrirDetalle(c));
+  return div;
+}
+
+function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+function abrirNuevo(){
+  $('fTitulo').value = ''; $('fDescripcion').value = '';
+  $('modalNuevo').classList.remove('hidden');
+}
+
+async function guardarNuevo(){
+  const titulo = $('fTitulo').value.trim();
+  const descripcion = $('fDescripcion').value.trim();
+  if (!titulo || !descripcion) { alert('Completá título y descripción.'); return; }
+  const { data: { user } } = await sb.auth.getUser();
+  const { data: perfil } = await sb.from('usuarios').select('nombre,email').eq('id', user.id).maybeSingle();
+  const { data, error } = await sb.from('mejora_continua').insert({
+    titulo, descripcion,
+    modulo_origen: $('fModulo').value,
+    severidad: $('fSeveridad').value,
+    reportado_por: user.id,
+    reportado_por_nombre: perfil?.nombre || perfil?.email || null,
+  }).select().single();
+  if (error) { alert('No se pudo guardar: ' + error.message); return; }
+  $('modalNuevo').classList.add('hidden');
+  await cargarTodo();
+  abrirDetalle(data);
+}
+
+function abrirDetalle(c){
+  casoActivo = c;
+  $('dTitulo').textContent = c.titulo;
+  $('dCodigo').textContent = `${c.codigo} · reportado ${c.fecha_reporte?.slice(0,10)} por ${c.reportado_por_nombre || '—'}`;
+  $('dSeveridad').value = c.severidad;
+  $('dDesperdicio').value = c.tipo_desperdicio || '';
+  $('dImpacto').value = c.impacto_medido || '';
+  $('dMetodo').value = c.metodo_analisis || '';
+  $('dFechaObjetivo').value = c.fecha_objetivo || '';
+  $('dCausa').value = c.causa_raiz || '';
+  $('dAccionMejora').value = c.accion_mejora || '';
+  $('dAccionControl').value = c.accion_control || '';
+  $('dReincidente').checked = !!c.reincidente;
+  $('dEnlace').value = c.enlace || '';
+
+  const assist = $('dAssist');
+  if (c.sugerencia_desperdicio && !c.tipo_desperdicio) {
+    assist.classList.remove('hidden');
+    assist.innerHTML = `<b>Sugerencia del asistente:</b> por las palabras del reporte, esto parece desperdicio tipo "<b>${c.sugerencia_desperdicio}</b>". Confirmalo o cambialo en el campo de al lado.`;
+  } else { assist.classList.add('hidden'); }
+
+  const fases = listas.estado_mejora.map(x => x.valor);
+  const idx = fases.indexOf(c.estado);
+  $('dPasos').innerHTML = fases.map((f,i) => `<button data-fase="${f}" class="${i===idx?'on':''}" ${!puedeEditar?'disabled':''}>${f}</button>`).join('');
+  $('dPasos').querySelectorAll('button').forEach(b => b.addEventListener('click', () => intentarAvanzar(b.dataset.fase)));
+
+  const controles = ['dSeveridad','dDesperdicio','dImpacto','dMetodo','dFechaObjetivo','dCausa','dAccionMejora','dAccionControl','dReincidente','dEnlace'];
+  controles.forEach(id => $(id).disabled = !puedeEditar);
+  $('guardarDetalle').classList.toggle('hidden', !puedeEditar);
+
+  $('modalDetalle').classList.remove('hidden');
+}
+
+function intentarAvanzar(fase){
+  const fases = listas.estado_mejora.map(x => x.valor);
+  const destino = fases.indexOf(fase);
+  const causa = $('dCausa').value.trim();
+  const control = $('dAccionControl').value.trim();
+  if (destino >= fases.indexOf('Mejorar') && !causa) {
+    alert('Todavía no se documentó la causa raíz. El asistente no deja avanzar a "Mejorar" sin ese paso — evita saltar directo al parche.');
+    return;
+  }
+  if (fase === 'Cerrado' && !control) {
+    alert('Falta la acción de control. Sin eso el problema puede volver a pasar y nadie lo va a notar hasta que sea tarde — completá cómo se previene la reincidencia.');
+    return;
+  }
+  $('dPasos').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.fase === fase));
+  $('dPasos').dataset.destino = fase;
+}
+
+async function guardarDetalle(){
+  if (!casoActivo) return;
+  const estadoDestino = $('dPasos').dataset.destino || casoActivo.estado;
+  const payload = {
+    severidad: $('dSeveridad').value,
+    tipo_desperdicio: $('dDesperdicio').value || null,
+    impacto_medido: $('dImpacto').value || null,
+    metodo_analisis: $('dMetodo').value || null,
+    fecha_objetivo: $('dFechaObjetivo').value || null,
+    causa_raiz: $('dCausa').value || null,
+    accion_mejora: $('dAccionMejora').value || null,
+    accion_control: $('dAccionControl').value || null,
+    reincidente: $('dReincidente').checked,
+    enlace: $('dEnlace').value || null,
+    estado: estadoDestino,
+  };
+  const { error } = await sb.from('mejora_continua').update(payload).eq('id', casoActivo.id);
+  if (error) { alert('No se pudo guardar: ' + error.message); return; }
+  $('modalDetalle').classList.add('hidden');
+  delete $('dPasos').dataset.destino;
+  await cargarTodo();
+}
+
+boot();
+</script>
+</body>
+</html>

@@ -46,6 +46,34 @@ Para publicar una version nueva:
 | Equipo y capacidad | Personas y horas disponibles por mes |
 | Historial de cambios | Quien cambio que, cuando y con que valor anterior |
 | Configuracion | Perfil, usuarios y roles, parametros, listas y conexion |
+| [Mejora continua](mejora-continua.html) | Asistente Lean / Six Sigma: cada problema `CI-###` pasa por Definir, Medir, Analizar, Mejorar y Controlar antes de cerrarse |
+
+## Mejora continua (Lean / Six Sigma)
+
+`mejora-continua.html` es un modulo aparte que usa la misma base de Supabase (mismos
+usuarios, mismos roles) pero vive en su propio archivo en vez de ir empaquetado dentro de
+`app.html`. Es deliberado: `app.html`/`index.html` son un bundle grande y fragil de
+sincronizar a mano (ver el historial de versiones), y este modulo se agrega y actualiza
+sin tocar ese bundle ni arriesgar una regresion ahi.
+
+Que hace:
+
+- Cada problema reportado entra con estado `Definir` y un codigo `CI-###` automatico.
+- Al guardar, un trigger en la base sugiere de que tipo de desperdicio Lean se trata
+  (Defectos, Espera, Sobreproduccion, Sobreprocesamiento, Transporte, Inventario,
+  Movimiento, Talento no utilizado) segun el texto del reporte. Es una sugerencia, no
+  una clasificacion automatica definitiva: la persona la confirma o la corrige.
+- La severidad fija una fecha objetivo sugerida (Critico +2 dias, Alto +7, Medio +15,
+  Bajo +30) si no se define una a mano.
+- No se puede avanzar a la fase Mejorar sin causa raiz documentada, ni cerrar el caso
+  sin una accion de control — para que el registro quede como una mejora real y no
+  como un "ya quedo" sin causa ni prevencion.
+- Un panel de KPIs (abiertos, vencidos, % de reincidencia, ciclo promedio, % con causa
+  raiz documentada) funciona como cuadro de control simple del propio proceso de
+  mejora continua.
+- Toda la clasificacion (severidad, tipo de desperdicio, metodo de analisis, modulos)
+  se administra desde `config_listas`, igual que el resto de los modulos — no hace
+  falta tocar codigo para agregar o renombrar una opcion.
 
 ## En el telefono
 
@@ -67,8 +95,8 @@ Cada modulo editable acepta carga por CSV. El boton *Cargar desde CSV* entrega l
 del modulo con tres filas: los encabezados, una guia con los valores validos y un ejemplo.
 Los identificadores se generan solos.
 
-## Notas
+## Notes
 
-La clave anonima de Supabase esta incluida en el archivo: esta disenada para vivir en el
-navegador y el acceso real lo controlan el inicio de sesion y las politicas de seguridad
+La clave anonima de Supabase esta incluida en el archivo: esta disenada para vivin en el
+navegador y el acceso real lo controla en el inicio de sesion y las politicas de seguridad
 por fila. Las claves de servicio nunca se publican aqui.
