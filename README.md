@@ -20,7 +20,30 @@ volver la conexion.
 **Archivo suelto:** descarga [app.html](app.html) y abrelo con doble clic. Necesita red
 para el inicio de sesion y para leer y escribir los datos.
 
+## Documentacion
+
+Si vas a trabajar sobre este repositorio, arranca por
+**[docs/ESTADO.md](docs/ESTADO.md)**: dice donde esta el proyecto, que se hizo
+y por donde seguir.
+
+| Documento | Para que |
+| --- | --- |
+| [ESTADO.md](docs/ESTADO.md) | Punto de entrada: estado actual y proximos pasos |
+| [ARQUITECTURA.md](docs/ARQUITECTURA.md) | Como esta armada la app. **Obligatorio antes de tocar app.html o index.html** |
+| [roadmap-mejora-continua.md](docs/roadmap-mejora-continua.md) | Especificacion del modulo DMAIC completo |
+| [migracion-vite.md](docs/migracion-vite.md) | Plan de la reescritura a un proyecto con build real |
+| [plan-profesionalizacion.md](docs/plan-profesionalizacion.md) | Plan Lean/Six Sigma por fases |
+| [checklist-release.md](docs/checklist-release.md) | Que verificar antes de publicar |
+| [runbook.md](docs/runbook.md) | Que hacer cuando algo se rompe |
+| [supabase/README.md](supabase/README.md) | Reglas del esquema y seguridad |
+
+> **Aviso**: la version vive en **cuatro** lugares (`version.json`, `sw.js`, y
+> una constante dentro de `app.html` e `index.html`). Nunca las edites a mano:
+> usa `node scripts/release.mjs bump patch`. Desincronizarlas deja la app en
+> bucle de recarga infinito; ya paso una vez.
+
 ## Actualizaciones automaticas
+
 
 No hace falta volver a descargar nada. La app consulta `version.json` al abrirse y, si hay
 una version mas nueva, la descarga y la aplica. En **Configuracion -> Version y
