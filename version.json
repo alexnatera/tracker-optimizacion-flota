@@ -1,6 +1,6 @@
 {
-  "version": "1.6.0",
+  "version": "1.6.1",
   "archivo": "app.html",
   "fecha": "2026-08-06",
-  "notas": "Modulo Mejora continua accesible desde el menu. Iconos mas grandes (18px) y rehechos los de Resumen, Contactos, Visitas y Configuracion. Titulo de pestana OPTRACKER. Tabla de notificaciones creada en la base."
+  "notas": "Corrige el bucle de recarga (la constante VERSION del bundle no se habia sincronizado). Agrega Mejora continua al menu."
 }
