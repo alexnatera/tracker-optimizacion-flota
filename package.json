@@ -1,0 +1,17 @@
+{
+  "name": "optracker",
+  "version": "1.5.4",
+  "private": true,
+  "type": "module",
+  "description": "OPTRACKER - portafolio de optimizacion, radar por pais, carga del equipo y planificacion de viajes",
+  "scripts": {
+    "check": "node scripts/release.mjs check",
+    "release": "node scripts/release.mjs",
+    "smoke": "playwright test",
+    "smoke:ui": "playwright test --ui",
+    "verify": "npm run check && npm run smoke"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0"
+  }
+}
