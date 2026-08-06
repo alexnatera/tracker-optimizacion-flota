@@ -62,8 +62,8 @@ fallar la reconstruccion desde cero.
 
 ## Hallazgos de seguridad aceptados a proposito
 
-El linter (`get_advisors`) reporta tres cosas que se decidio **no** cambiar,
-con motivo:
+El linter (`get_advisors`) reporta cuatro cosas que se decidio **no**
+cambiar, con motivo:
 
 - **`secretos` con RLS y sin politicas** (INFO). Es intencional: nada del
   cliente debe poder leer esa tabla. Una tabla con RLS activo y sin
@@ -79,7 +79,10 @@ con motivo:
   editor. Revocar `EXECUTE` cerraria el aviso, pero el riesgo de romper
   los triggers en produccion es mayor que el beneficio. Se revisa si
   alguna vez se agrega una funcion `SECURITY DEFINER` que si exponga algo.
-
-Pendiente de habilitar a mano en el dashboard (no se puede por migracion):
-**proteccion de contrasenas filtradas** (HaveIBeenPwned) en Auth >
-Passwords.
+- **Proteccion de contrasenas filtradas desactivada** (WARN). NO se puede
+  activar: la funcion (cotejo contra HaveIBeenPwned) esta disponible solo
+  desde el plan Pro de Supabase, y la organizacion esta en el plan
+  gratuito. Lo que si se puede y conviene configurar en
+  Authentication > Sign In / Providers > Email es el largo minimo de
+  contrasena (8 o mas) y exigir digitos, mayusculas, minusculas y
+  simbolos. Revisar este punto si alguna vez se pasa a Pro.
