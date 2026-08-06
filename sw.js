@@ -1,7 +1,7 @@
 /* Service worker del Tracker de Optimizacion de Flota */
-const VERSION = '1.5.4';
+const VERSION = '1.6.0';
 const CACHE = 'tracker-' + VERSION;
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './mejora-continua.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

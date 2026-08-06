@@ -1,6 +1,6 @@
 {
-  "version": "1.5.4",
+  "version": "1.6.0",
   "archivo": "app.html",
-  "fecha": "2026-08-05",
-  "notas": "Se restauro el panel de notificaciones (se habia perdido en una edicion anterior). Nuevo panel 'Quien esta en linea' con nombres y estado. Metaetiquetas de PWA (theme-color, viewport-fit, apple-mobile-web-app) restauradas en el HTML publicado."
+  "fecha": "2026-08-06",
+  "notas": "Modulo Mejora continua accesible desde el menu. Iconos mas grandes (18px) y rehechos los de Resumen, Contactos, Visitas y Configuracion. Titulo de pestana OPTRACKER. Tabla de notificaciones creada en la base."
 }
