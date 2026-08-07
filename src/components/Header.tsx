@@ -9,6 +9,7 @@ interface HeaderProps {
   onRefrescar: () => void;
   busqueda: string;
   onBusquedaChange: (val: string) => void;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,11 +18,12 @@ export const Header: React.FC<HeaderProps> = ({
   cargando,
   onRefrescar,
   busqueda,
-  onBusquedaChange
+  onBusquedaChange,
+  onLogout
 }) => {
   const iniciales = usuarioActual?.email
     ? usuarioActual.email.substring(0, 2).toUpperCase()
-    : 'AN';
+    : 'US';
 
   return (
     <div
@@ -102,31 +104,41 @@ export const Header: React.FC<HeaderProps> = ({
           marginLeft: 'auto',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '12px',
           flexWrap: 'wrap'
         }}
       >
-        {/* User initials bubble */}
-        <div title={usuarioActual?.email || 'Alex Natera'} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-          <div style={{ display: 'flex' }}>
-            <span
-              style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: '#2f9e7a',
-                border: '2px solid #fff',
-                color: '#fff',
-                font: "600 10px/20px 'IBM Plex Sans'",
-                textAlign: 'center'
-              }}
-            >
-              {iniciales}
-            </span>
-          </div>
-          <span data-s="muted" style={{ font: "400 12px 'IBM Plex Sans'", color: '#6b7686' }}>
-            1 de 1
+        {/* User profile & email info */}
+        <div
+          id="whoami"
+          title={usuarioActual?.email || 'Usuario Autenticado'}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <span
+            style={{
+              width: '26px',
+              height: '26px',
+              borderRadius: '50%',
+              background: '#22375c',
+              border: '2px solid #fff',
+              color: '#fff',
+              font: "600 11px/22px 'IBM Plex Sans'",
+              textAlign: 'center',
+              display: 'inline-block'
+            }}
+          >
+            {iniciales}
           </span>
+          {usuarioActual?.email && (
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+              <span style={{ font: "600 12px 'IBM Plex Sans'", color: '#1b2536' }}>
+                {usuarioActual.email}
+              </span>
+              <span style={{ font: "400 11px 'IBM Plex Sans'", color: '#6b7686', textTransform: 'capitalize' }}>
+                Rol: {usuarioActual.rol}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Sync Button */}
@@ -149,22 +161,26 @@ export const Header: React.FC<HeaderProps> = ({
           {cargando ? 'Cargando...' : 'Sincronizar'}
         </button>
 
-        {/* Save Button */}
-        <button
-          data-act="guardar"
-          style={{
-            padding: '7px 13px',
-            border: 0,
-            borderRadius: '5px',
-            background: '#22375c',
-            color: '#fff',
-            font: "600 12px 'IBM Plex Sans'",
-            whiteSpace: 'nowrap',
-            cursor: 'pointer'
-          }}
-        >
-          Guardar
-        </button>
+        {/* Logout Button */}
+        {onLogout && (
+          <button
+            id="btnLogout"
+            data-act="logout"
+            onClick={onLogout}
+            style={{
+              padding: '7px 12px',
+              border: '1px solid #e2b8b8',
+              borderRadius: '5px',
+              background: '#fff5f5',
+              color: '#c0483f',
+              font: "600 12px 'IBM Plex Sans'",
+              whiteSpace: 'nowrap',
+              cursor: 'pointer'
+            }}
+          >
+            Cerrar Sesión
+          </button>
+        )}
       </div>
     </div>
   );

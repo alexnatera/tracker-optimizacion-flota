@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
-import { AppState, Iniciativa, Tarea, IndicadorRadar, Contacto, Visita, Persona, Participacion, HistorialLog, ConfigLista, MejoraContinua } from './tipos/database';
+import { AppState, Persona, Usuario, RolUsuario } from './tipos/database';
+import { construirUsuarioAutenticado } from './lib/auth';
 import { Layout } from './components/Layout';
+import { Login } from './components/Login';
 import { ModuloId } from './components/Sidebar';
 
 import { ModuloResumen } from './modulos/resumen/ModuloResumen';
@@ -15,15 +18,9 @@ import { ModuloHistorial } from './modulos/historial/ModuloHistorial';
 import { ModuloAjustes } from './modulos/ajustes/ModuloAjustes';
 import { ModuloMejora } from './modulos/mejora/ModuloMejora';
 
-// Datos iniciales de demostración si la conexión aún no ha traído filas
-const DATOS_INICIALES_DEMO: AppState = {
-  personas: [
-    { id: '1', nombre: 'Alex Natera', email: 'alex@flota.org', pais: 'Chile', rol_operativo: 'Líder de Flota', horas_mes: 160, activo: true },
-    { id: '2', nombre: 'Carlos Silva', email: 'carlos@flota.org', pais: 'Perú', rol_operativo: 'Ingeniero Operativo', horas_mes: 160, activo: true }
-  ],
-  usuarios: [
-    { id: 'u1', email: 'alex@flota.org', rol: 'admin', persona_id: '1', activo: true }
-  ],
+const STATE_INICIAL: AppState = {
+  personas: [],
+  usuarios: [],
   iniciativas: [
     { id: '1', codigo: 'OPT-001', titulo: 'Optimización de Consumo de Combustible en Tránsito', pais: 'Chile', fase: 'Ejecución', estado: 'En Ejecución', avance: 65, impacto_estimado_usd: 120000, responsable_id: '1' },
     { id: '2', codigo: 'OPT-002', titulo: 'Reducción de Tiempo de Permanencia en Puerto', pais: 'Perú', fase: 'Evaluación', estado: 'Planificación', avance: 30, impacto_estimado_usd: 85000, responsable_id: '2' }
@@ -46,34 +43,70 @@ const DATOS_INICIALES_DEMO: AppState = {
     { id: 'a1', nombre: 'Inspección de Casco', categoria: 'Mantenimiento' },
     { id: 'a2', nombre: 'Análisis de Datos DMAIC', categoria: 'Mejora Continua' }
   ],
-  participaciones: [
-    { id: 'p1', persona_id: '1', actividad_id: 'a1', porcentaje: 50 },
-    { id: 'p2', persona_id: '1', actividad_id: 'a2', porcentaje: 40 }
-  ],
-  capacidad: [
-    { id: 'cap1', persona_id: '1', mes: '2026-08', horas_disponibles: 160 }
-  ],
+  participaciones: [],
+  capacidad: [],
   mejora: [
     { id: 'ci1', codigo: 'CI-001', titulo: 'Demora excesiva en descarga de lubricantes', problema: 'Tiempos de espera superiores a 4 horas en muelle principal', desperdicio_lean: 'Espera', estado: 'Analizar', severidad: 'Alto', lsl: 1.0, usl: 3.0 }
   ],
-  historial: [
-    { id: 'h1', tabla: 'iniciativas', fila_id: '1', campo: 'avance', valor_anterior: '50', valor_nuevo: '65', usuario_id: 'u1', created_at: new Date().toISOString() }
-  ],
+  historial: [],
   configListas: [],
   notificaciones: [],
-  usuarioActual: { id: 'u1', email: 'alex@flota.org', rol: 'admin', persona_id: '1', activo: true },
-  personaActual: { id: '1', nombre: 'Alex Natera', email: 'alex@flota.org', pais: 'Chile', rol_operativo: 'Líder de Flota', horas_mes: 160, activo: true },
+  usuarioActual: null,
+  personaActual: null,
   cargando: false
 };
 
 export const App: React.FC = () => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [authCargando, setAuthCargando] = useState<boolean>(true);
   const [moduloActivo, setModuloActivo] = useState<ModuloId>('resumen');
   const [busqueda, setBusqueda] = useState<string>('');
-  const [state, setState] = useState<AppState>(DATOS_INICIALES_DEMO);
+  const [state, setState] = useState<AppState>(STATE_INICIAL);
 
-  const cargarDatosSupabase = async () => {
+  const cargarDatosYUsuario = async (user: User) => {
     setState(prev => ({ ...prev, cargando: true }));
     try {
+      // 1. Perfil del usuario desde la tabla 'usuarios'
+      let perfil: any = null;
+      const { data: pId } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (pId) {
+        perfil = pId;
+      } else if (user.email) {
+        const { data: pEmail } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('email', user.email)
+          .maybeSingle();
+        if (pEmail) perfil = pEmail;
+      }
+
+      const usuarioAutenticado = construirUsuarioAutenticado(user.id, user.email, perfil);
+
+      // 2. Persona asociada en tabla 'personas'
+      let personaAutenticada: Persona | null = null;
+      if (perfil?.persona_id) {
+        const { data: p } = await supabase
+          .from('personas')
+          .select('*')
+          .eq('id', perfil.persona_id)
+          .maybeSingle();
+        if (p) personaAutenticada = p;
+      }
+      if (!personaAutenticada && user.email) {
+        const { data: p } = await supabase
+          .from('personas')
+          .select('*')
+          .eq('email', user.email)
+          .maybeSingle();
+        if (p) personaAutenticada = p;
+      }
+
+      // 3. Cargar colecciones desde Supabase
       const [resIni, resTar, resRad, resCon, resVis, resMej, resHis, resPer, resPart] = await Promise.all([
         supabase.from('portafolio').select('*').limit(100),
         supabase.from('tareas').select('*').limit(100),
@@ -88,6 +121,8 @@ export const App: React.FC = () => {
 
       setState(prev => ({
         ...prev,
+        usuarioActual: usuarioAutenticado,
+        personaActual: personaAutenticada,
         iniciativas: (resIni.data && resIni.data.length > 0) ? resIni.data : prev.iniciativas,
         tareas: (resTar.data && resTar.data.length > 0) ? resTar.data : prev.tareas,
         radar: (resRad.data && resRad.data.length > 0) ? resRad.data : prev.radar,
@@ -100,14 +135,64 @@ export const App: React.FC = () => {
         cargando: false
       }));
     } catch (e) {
-      console.warn('[OPTRACKER] Usando datos locales demo (fallback):', e);
+      console.warn('[OPTRACKER] Error en carga de Supabase:', e);
       setState(prev => ({ ...prev, cargando: false }));
     }
   };
 
   useEffect(() => {
-    cargarDatosSupabase();
+    setAuthCargando(true);
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        cargarDatosYUsuario(session.user);
+      }
+      setAuthCargando(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        await cargarDatosYUsuario(session.user);
+      } else {
+        setState(STATE_INICIAL);
+      }
+      setAuthCargando(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setState(STATE_INICIAL);
+  };
+
+  if (authCargando) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#0b192c',
+          color: '#ffffff',
+          font: "500 15px 'IBM Plex Sans', sans-serif"
+        }}
+      >
+        Cargando sesión...
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Login />;
+  }
 
   const renderModulo = () => {
     switch (moduloActivo) {
@@ -141,9 +226,10 @@ export const App: React.FC = () => {
       moduloActivo={moduloActivo}
       onSeleccionarModulo={setModuloActivo}
       state={state}
-      onRefrescar={cargarDatosSupabase}
+      onRefrescar={() => session?.user && cargarDatosYUsuario(session.user)}
       busqueda={busqueda}
       onBusquedaChange={setBusqueda}
+      onLogout={handleLogout}
     >
       {renderModulo()}
     </Layout>

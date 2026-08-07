@@ -18,12 +18,12 @@ export const ModuloAjustes: React.FC<ModuloAjustesProps> = ({ usuarioActual }) =
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', font: "13px 'IBM Plex Sans'", color: '#3f4a5a' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
               <span style={{ color: '#6b7686' }}>Email de acceso:</span>
-              <strong style={{ color: '#1b2536' }}>{usuarioActual?.email || 'alex@flota.org'}</strong>
+              <strong style={{ color: '#1b2536' }}>{usuarioActual?.email || 'N/A'}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
               <span style={{ color: '#6b7686' }}>Rol asignado:</span>
               <span style={{ padding: '2px 8px', borderRadius: '4px', background: '#eaf5ee', color: '#2f9e7a', font: "600 11px 'IBM Plex Sans'" }}>
-                {usuarioActual?.rol || 'admin'}
+                {usuarioActual?.rol || 'lector'}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>

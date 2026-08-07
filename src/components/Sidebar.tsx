@@ -37,8 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   conteoPendientes = 0,
   temaOscuro = false,
   onToggleTema,
-  usuarioEmail = 'alex@flota.org',
-  usuarioRol = 'admin'
+  usuarioEmail = '',
+  usuarioRol = 'lector'
 }) => {
   const modulos: ItemMenu[] = [
     {

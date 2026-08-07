@@ -10,6 +10,7 @@ interface LayoutProps {
   onRefrescar: () => void;
   busqueda: string;
   onBusquedaChange: (val: string) => void;
+  onLogout?: () => void;
   children: React.ReactNode;
 }
 
@@ -20,6 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onRefrescar,
   busqueda,
   onBusquedaChange,
+  onLogout,
   children
 }) => {
   const [temaOscuro, setTemaOscuro] = useState<boolean>(false);
@@ -43,8 +45,8 @@ export const Layout: React.FC<LayoutProps> = ({
         conteoPendientes={tareasPendientes}
         temaOscuro={temaOscuro}
         onToggleTema={toggleTema}
-        usuarioEmail={state.usuarioActual?.email || 'alex@flota.org'}
-        usuarioRol={state.usuarioActual?.rol || 'admin'}
+        usuarioEmail={state.usuarioActual?.email || ''}
+        usuarioRol={state.usuarioActual?.rol || 'lector'}
       />
       <main data-mainpane="1" style={{ flex: 1, minWidth: 0, padding: '0 30px 60px' }}>
         <Header
@@ -54,6 +56,7 @@ export const Layout: React.FC<LayoutProps> = ({
           onRefrescar={onRefrescar}
           busqueda={busqueda}
           onBusquedaChange={onBusquedaChange}
+          onLogout={onLogout}
         />
         {children}
       </main>
