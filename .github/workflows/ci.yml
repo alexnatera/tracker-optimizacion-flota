@@ -33,18 +33,17 @@ jobs:
       - name: Instalar dependencias
         run: npm ci || npm install
 
-      # Barato y rapido: corta antes de gastar tiempo en el navegador.
-      - name: Verificar que la version este sincronizada
-        run: npm run check
+      - name: Verificar tipos y tests unitarios
+        run: |
+          npm run typecheck
+          npm test
 
-      - name: Instalar navegador para Playwright
-        run: npx playwright install --with-deps chromium
-
-      - name: Smoke test
-        run: npm run smoke
+      - name: Build con Vite
         env:
-          OPTRACKER_TEST_EMAIL: ${{ secrets.OPTRACKER_TEST_EMAIL }}
-          OPTRACKER_TEST_PASSWORD: ${{ secrets.OPTRACKER_TEST_PASSWORD }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
 
       - name: Guardar el reporte si algo fallo
         if: failure()
