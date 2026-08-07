@@ -53,22 +53,7 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
-  publicar:
-    name: Publicar en GitHub Pages
-    needs: verificar
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-
-      - id: deployment
-        uses: actions/deploy-pages@v4
+# NOTA: el job "publicar" fue ELIMINADO porque entraba en conflicto con
+# .github/workflows/deploy.yml (que publica correctamente solo la carpeta dist/).
+# Antes subía la raíz del repo (path: .) incluyendo index.html de desarrollo,
+# pisando el deploy correcto de Vite en GitHub Pages.
