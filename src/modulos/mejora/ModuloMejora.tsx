@@ -21,7 +21,7 @@ export const ModuloMejora: React.FC<ModuloMejoraProps> = ({ casosMejora }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       {/* Top Banner Card */}
-      <div data-s="card" style={{ background: '#fff', border: '1px solid #e4e7ec', borderRadius: '7px', padding: '18px 20px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+      <div data-s="card" style={{ background: '#fff', border: '1px solid #e4e7ec', borderRadius: '7px', padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h2 style={{ margin: 0, font: "600 16px 'IBM Plex Sans'", color: '#22375c' }}>
             Mejora Continua Lean Six Sigma / DMAIC (CI-###)

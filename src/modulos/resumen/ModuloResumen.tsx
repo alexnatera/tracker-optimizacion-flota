@@ -14,7 +14,7 @@ export const ModuloResumen: React.FC<ModuloResumenProps> = ({ state, onSeleccion
   
   const totalTareas = state.tareas.length;
   const tareasPendientes = state.tareas.filter(t => t.estado === 'Pendiente' || t.estado === 'En Proceso').length;
-  const tareasVencidas = state.tareas.filter(t => t.estado === 'Vencida' || t.estado === 'Atrasada').length;
+  const tareasVencidas = state.tareas.filter(t => t.estado === 'Bloqueada' || t.prioridad === 'Alta' || t.prioridad === 'Urgente').length;
   
   const radarRojo = state.radar.filter(r => r.estado === 'Rojo' || r.estado === 'Amarillo').length;
   const incidentesAbiertos = state.mejora.filter(m => m.estado !== 'Cerrado').length;
@@ -28,7 +28,7 @@ export const ModuloResumen: React.FC<ModuloResumenProps> = ({ state, onSeleccion
     { label: 'Portafolio Iniciativas', valor: totalIniciativas, color: '#3f6d96', modulo: 'portafolio' },
     { label: 'En Ejecución', valor: enEjecucion, color: '#2f9e7a', modulo: 'portafolio' },
     { label: 'Tareas Pendientes', valor: tareasPendientes, color: '#d17a3f', modulo: 'tareas' },
-    { label: 'Tareas Vencidas', valor: tareasVencidas, color: '#c0483f', modulo: 'tareas' },
+    { label: 'Tareas Críticas / Bloq', valor: tareasVencidas, color: '#c0483f', modulo: 'tareas' },
     { label: 'Alertas Radar', valor: radarRojo, color: '#c0483f', modulo: 'radar' },
     { label: 'Casos DMAIC', valor: incidentesAbiertos, color: '#b0872b', modulo: 'mejora' },
     { label: 'Completadas', valor: completadas, color: '#2f9e7a', modulo: 'portafolio' },
@@ -44,7 +44,7 @@ export const ModuloResumen: React.FC<ModuloResumenProps> = ({ state, onSeleccion
       punto: '#c0483f'
     }] : []),
     ...(tareasVencidas > 0 ? [{
-      texto: `${tareasVencidas} tareas operativas han superado su fecha límite de entrega`,
+      texto: `${tareasVencidas} tareas operativas requieren atención prioritaria o están bloqueadas`,
       bg: '#fdf6e6',
       borde: '#eddfba',
       punto: '#c9973a'
@@ -71,7 +71,7 @@ export const ModuloResumen: React.FC<ModuloResumenProps> = ({ state, onSeleccion
 
   // Agrupar tareas por estado
   const tareasEstadoMap: Record<string, number> = {
-    'Completado': state.tareas.filter(t => t.estado === 'Completado').length,
+    'Completada': state.tareas.filter(t => t.estado === 'Completada').length,
     'En Proceso': state.tareas.filter(t => t.estado === 'En Proceso').length,
     'Pendiente': state.tareas.filter(t => t.estado === 'Pendiente').length
   };

@@ -68,8 +68,8 @@ export const ModuloTareas: React.FC<ModuloTareasProps> = ({ tareas }) => {
             </thead>
             <tbody>
               {filtradas.map(t => {
-                const esCompletado = t.estado === 'Completado';
-                const esVencida = t.estado === 'Vencida' || t.prioridad === 'Alta';
+                const esCompletado = t.estado === 'Completada';
+                const esVencida = t.estado === 'Bloqueada' || t.prioridad === 'Alta' || t.prioridad === 'Urgente';
                 const chipBg = esCompletado ? '#eaf5ee' : esVencida ? '#fdeceb' : '#fdf6e6';
                 const chipFg = esCompletado ? '#2f9e7a' : esVencida ? '#c0483f' : '#c9973a';
                 return (
