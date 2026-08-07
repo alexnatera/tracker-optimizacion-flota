@@ -1,7 +1,6 @@
 import React from 'react';
 import { HistorialLog } from '../../tipos/database';
 import { formatearFecha } from '../../lib/formato';
-import { History, User, FileText } from 'lucide-react';
 
 interface ModuloHistorialProps {
   historial: HistorialLog[];
@@ -9,40 +8,42 @@ interface ModuloHistorialProps {
 
 export const ModuloHistorial: React.FC<ModuloHistorialProps> = ({ historial }) => {
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="glass-panel rounded-xl overflow-hidden border border-slate-800">
-        <div className="p-4 border-b border-slate-800 bg-slate-900/60 text-xs font-semibold text-slate-300">
-          Registro de Auditoría Inmutable (Últimos 300 eventos)
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div data-s="card" style={{ background: '#fff', border: '1px solid #e4e7ec', borderRadius: '7px', padding: '18px 20px' }}>
+        <h2 style={{ margin: '0 0 14px', font: "600 15px/1 'IBM Plex Sans'", color: '#22375c' }}>
+          Historial Inmutable de Auditoría de Cambios
+        </h2>
+        <div data-tablawrap="1" style={{ overflowX: 'auto' }}>
+          <table data-tabla="1" style={{ width: '100%', borderCollapse: 'collapse', font: "13px 'IBM Plex Sans'" }}>
+            <thead>
+              <tr style={{ background: '#0d2340', color: '#fff', textAlign: 'left' }}>
+                <th style={{ padding: '10px 12px', font: "600 12px 'IBM Plex Sans'" }}>FECHA / HORA</th>
+                <th style={{ padding: '10px 12px', font: "600 12px 'IBM Plex Sans'" }}>TABLA</th>
+                <th style={{ padding: '10px 12px', font: "600 12px 'IBM Plex Sans'" }}>CAMPO MODIFICADO</th>
+                <th style={{ padding: '10px 12px', font: "600 12px 'IBM Plex Sans'" }}>VALOR ANTERIOR</th>
+                <th style={{ padding: '10px 12px', font: "600 12px 'IBM Plex Sans'" }}>VALOR NUEVO</th>
+              </tr>
+            </thead>
+            <tbody>
+              {historial.map(h => (
+                <tr key={h.id} style={{ borderBottom: '1px solid #eef0f3' }}>
+                  <td style={{ padding: '11px 12px', color: '#6b7686' }}>{formatearFecha(h.created_at)}</td>
+                  <td style={{ padding: '11px 12px', font: "600 12px 'IBM Plex Sans'", color: '#22375c' }}>{h.tabla}</td>
+                  <td style={{ padding: '11px 12px', color: '#1b2536', font: "500 13px 'IBM Plex Sans'" }}>{h.campo}</td>
+                  <td style={{ padding: '11px 12px', color: '#c9973a' }}>{h.valor_anterior || '(vacío)'}</td>
+                  <td style={{ padding: '11px 12px', font: "600 12px 'IBM Plex Sans'", color: '#2f9e7a' }}>{h.valor_nuevo || '(vacío)'}</td>
+                </tr>
+              ))}
+              {historial.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#6b7686' }}>
+                    No hay eventos de auditoría registrados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-        <table className="w-full text-left text-xs text-slate-300">
-          <thead className="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
-            <tr>
-              <th className="p-4">Fecha / Hora</th>
-              <th className="p-4">Tabla</th>
-              <th className="p-4">Campo Modificado</th>
-              <th className="p-4">Valor Anterior</th>
-              <th className="p-4">Valor Nuevo</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/60 font-mono">
-            {historial.map(h => (
-              <tr key={h.id} className="hover:bg-slate-800/30 transition-colors">
-                <td className="p-4 text-slate-400">{formatearFecha(h.created_at)}</td>
-                <td className="p-4 font-bold text-cyan-400">{h.tabla}</td>
-                <td className="p-4 text-slate-200">{h.campo}</td>
-                <td className="p-4 text-amber-400/80 truncate max-w-[150px]">{h.valor_anterior || '(vacío)'}</td>
-                <td className="p-4 text-emerald-400 font-semibold truncate max-w-[150px]">{h.valor_nuevo || '(vacío)'}</td>
-              </tr>
-            ))}
-            {historial.length === 0 && (
-              <tr>
-                <td colSpan={5} className="p-8 text-center text-slate-500 font-sans">
-                  No hay registros de auditoría en el historial.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

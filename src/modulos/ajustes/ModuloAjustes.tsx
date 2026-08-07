@@ -1,58 +1,55 @@
 import React from 'react';
 import { ConfigLista, Usuario } from '../../tipos/database';
-import { Settings, Shield, Sliders, Database } from 'lucide-react';
 
 interface ModuloAjustesProps {
   configListas: ConfigLista[];
   usuarioActual: Usuario | null;
 }
 
-export const ModuloAjustes: React.FC<ModuloAjustesProps> = ({ configListas, usuarioActual }) => {
+export const ModuloAjustes: React.FC<ModuloAjustesProps> = ({ usuarioActual }) => {
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: '14px' }}>
         {/* Profile Card */}
-        <div className="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
-          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-            <Shield className="w-4 h-4 text-cyan-400" />
-            Perfil de Usuario y Permisos RLS
-          </h3>
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-800/60">
-              <span className="text-slate-400">Email:</span>
-              <span className="font-semibold text-slate-200">{usuarioActual?.email || 'dev@optracker.local'}</span>
+        <div data-s="card" style={{ background: '#fff', border: '1px solid #e4e7ec', borderRadius: '7px', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h2 style={{ margin: 0, font: "600 15px 'IBM Plex Sans'", color: '#22375c' }}>
+            Perfil de Usuario y Permisos
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', font: "13px 'IBM Plex Sans'", color: '#3f4a5a' }}>
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
+              <span style={{ color: '#6b7686' }}>Email de acceso:</span>
+              <strong style={{ color: '#1b2536' }}>{usuarioActual?.email || 'alex@flota.org'}</strong>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-800/60">
-              <span className="text-slate-400">Rol RLS Asignado:</span>
-              <span className="font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
+              <span style={{ color: '#6b7686' }}>Rol asignado:</span>
+              <span style={{ padding: '2px 8px', borderRadius: '4px', background: '#eaf5ee', color: '#2f9e7a', font: "600 11px 'IBM Plex Sans'" }}>
                 {usuarioActual?.rol || 'admin'}
               </span>
             </div>
-            <div className="flex justify-between py-1">
-              <span className="text-slate-400">Estado Cuenta:</span>
-              <span className="text-emerald-400 font-semibold">Activo</span>
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0' }}>
+              <span style={{ color: '#6b7686' }}>Estado de cuenta:</span>
+              <span style={{ color: '#2f9e7a', fontWeight: 600 }}>Activo (En línea)</span>
             </div>
           </div>
         </div>
 
-        {/* System info */}
-        <div className="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
-          <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-            <Database className="w-4 h-4 text-purple-400" />
-            Información del Sistema
-          </h3>
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-800/60">
-              <span className="text-slate-400">Frontend Stack:</span>
-              <span className="font-mono text-slate-200">Vite + React + TypeScript + PWA</span>
+        {/* System Settings Card */}
+        <div data-s="card" style={{ background: '#fff', border: '1px solid #e4e7ec', borderRadius: '7px', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h2 style={{ margin: 0, font: "600 15px 'IBM Plex Sans'", color: '#22375c' }}>
+            Configuración de la Plataforma
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', font: "13px 'IBM Plex Sans'", color: '#3f4a5a' }}>
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
+              <span style={{ color: '#6b7686' }}>Motor de cálculo:</span>
+              <strong style={{ color: '#1b2536' }}>168 hrs / mes nominales</strong>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-800/60">
-              <span className="text-slate-400">Base de Datos:</span>
-              <span className="font-mono text-slate-200">Supabase Cloud (PostgreSQL 15)</span>
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0', borderBottom: '1px solid #eef0f3' }}>
+              <span style={{ color: '#6b7686' }}>Base de datos:</span>
+              <strong style={{ color: '#22375c' }}>Supabase PostgreSQL 15 Cloud</strong>
             </div>
-            <div className="flex justify-between py-1">
-              <span className="text-slate-400">Despliegue:</span>
-              <span className="font-mono text-slate-200">GitHub Pages (Estático)</span>
+            <div style={{ display: 'flex', justifyBetween: 'space-between', padding: '6px 0' }}>
+              <span style={{ color: '#6b7686' }}>Plazo aviso RRHH viajes:</span>
+              <strong style={{ color: '#c9973a' }}>5 días hábiles previo a vuelo</strong>
             </div>
           </div>
         </div>

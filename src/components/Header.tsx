@@ -1,5 +1,4 @@
 import React from 'react';
-import { Search, Bell, UserCheck, RefreshCw, ShieldCheck } from 'lucide-react';
 import { ModuloId } from './Sidebar';
 import { Usuario } from '../tipos/database';
 
@@ -12,19 +11,6 @@ interface HeaderProps {
   onBusquedaChange: (val: string) => void;
 }
 
-const TITULOS_MODULOS: Record<ModuloId, { titulo: string; subtitulo: string }> = {
-  resumen: { titulo: 'Resumen Ejecutivo de Flota', subtitulo: 'Indicadores globales, semáforos de desempeño y tareas críticas' },
-  portafolio: { titulo: 'Portafolio de Optimizaciones (OPT-###)', subtitulo: 'Iniciativas de mejora operacional por país y avance' },
-  tareas: { titulo: 'Control y Seguimiento de Tareas (TAR-###)', subtitulo: 'Entregables operativos vinculados e independientes' },
-  radar: { titulo: 'Radar de Desempeño Operacional por País (RAD-###)', subtitulo: 'Monitoreo de métricas clave con umbrales configurables' },
-  contactos: { titulo: 'Directorio de Contactos Operativos', subtitulo: 'Directorio de responsables por filial y área' },
-  visitas: { titulo: 'Calendario de Visitas y Logística (VJ-###)', subtitulo: 'Planificación de viajes corporativos, vuelos y viáticos' },
-  equipo: { titulo: 'Matriz de Dedicación y Capacidad del Equipo', subtitulo: 'Asignación porcentual por persona/mes y horas disponibles' },
-  mejora: { titulo: 'Mejora Continua Lean / Six Sigma DMAIC (CI-###)', subtitulo: 'Asistente de causas raíz, clasificador TIMWOODS e I-MR' },
-  historial: { titulo: 'Historial Inmutable de Auditoría', subtitulo: 'Registro de trazabilidad de cambios por usuario y campo' },
-  ajustes: { titulo: 'Configuración y Listas del Sistema', subtitulo: 'Administración de perfiles, roles RLS y opciones dinámicas' }
-};
-
 export const Header: React.FC<HeaderProps> = ({
   moduloActivo,
   usuarioActual,
@@ -33,54 +19,153 @@ export const Header: React.FC<HeaderProps> = ({
   busqueda,
   onBusquedaChange
 }) => {
-  const infoModulo = TITULOS_MODULOS[moduloActivo] || { titulo: 'OPTRACKER', subtitulo: 'Gestión de Flota' };
+  const iniciales = usuarioActual?.email
+    ? usuarioActual.email.substring(0, 2).toUpperCase()
+    : 'AN';
 
   return (
-    <header className="glass-panel border-b border-slate-800/80 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
-      <div>
-        <h2 className="text-xl font-bold text-slate-100">{infoModulo.titulo}</h2>
-        <p className="text-xs text-slate-400 font-normal">{infoModulo.subtitulo}</p>
+    <div
+      data-barraestado="1"
+      data-noprint="1"
+      data-s="sub"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 30,
+        margin: '0 -30px 22px',
+        padding: '11px 30px',
+        background: '#fbfcfd',
+        borderBottom: '1px solid #dfe5ec',
+        boxShadow: '0 1px 0 rgba(13,35,64,.04)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '18px',
+        flexWrap: 'wrap'
+      }}
+    >
+      {/* Connection Status Dot */}
+      <span
+        data-s="ink"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '7px',
+          font: "500 12px 'IBM Plex Sans'",
+          color: '#3f4a5a'
+        }}
+      >
+        <span
+          style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            background: cargando ? '#c9973a' : '#2f9e7a',
+            flex: '0 0 8px'
+          }}
+        ></span>
+        {cargando ? 'Sincronizando...' : 'Base de datos conectada'}
+      </span>
+
+      {/* Sync text */}
+      <span data-s="muted" data-synctexto="1" style={{ font: "400 12px 'IBM Plex Sans'", color: '#6b7686' }}>
+        Todas las tablas cargadas
+      </span>
+
+      {/* Save status */}
+      <span data-s="muted" data-guardadotexto="1" style={{ font: "400 12px 'IBM Plex Sans'", color: '#6b7686' }}>
+        Sin cambios pendientes
+      </span>
+
+      {/* Search Input */}
+      <div style={{ marginLeft: '12px', flex: '0 1 220px' }}>
+        <input
+          type="text"
+          value={busqueda}
+          onChange={(e) => onBusquedaChange(e.target.value)}
+          placeholder="Filtrar por término..."
+          style={{
+            width: '100%',
+            padding: '5px 10px',
+            fontSize: '12px',
+            borderRadius: '4px',
+            border: '1px solid #d6dae1',
+            background: '#fff',
+            outline: 'none'
+          }}
+        />
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Search Input */}
-        <div className="relative w-64">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => onBusquedaChange(e.target.value)}
-            placeholder="Buscar por código, título, país..."
-            className="w-full bg-slate-900/80 border border-slate-700/60 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
-          />
+      {/* Actions */}
+      <div
+        data-barraestado-acciones="1"
+        style={{
+          marginLeft: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          flexWrap: 'wrap'
+        }}
+      >
+        {/* User initials bubble */}
+        <div title={usuarioActual?.email || 'Alex Natera'} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+          <div style={{ display: 'flex' }}>
+            <span
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#2f9e7a',
+                border: '2px solid #fff',
+                color: '#fff',
+                font: "600 10px/20px 'IBM Plex Sans'",
+                textAlign: 'center'
+              }}
+            >
+              {iniciales}
+            </span>
+          </div>
+          <span data-s="muted" style={{ font: "400 12px 'IBM Plex Sans'", color: '#6b7686' }}>
+            1 de 1
+          </span>
         </div>
 
-        {/* Refresh Button */}
+        {/* Sync Button */}
         <button
+          data-s="btn"
+          data-act="sincronizar"
           onClick={onRefrescar}
           disabled={cargando}
-          className="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/50 transition-all disabled:opacity-50"
-          title="Refrescar datos de Supabase"
+          style={{
+            padding: '7px 11px',
+            border: '1px solid #d6dae1',
+            borderRadius: '5px',
+            background: '#fff',
+            color: '#3f4a5a',
+            font: "500 12px 'IBM Plex Sans'",
+            whiteSpace: 'nowrap',
+            cursor: 'pointer'
+          }}
         >
-          <RefreshCw className={`w-4 h-4 ${cargando ? 'animate-spin text-cyan-400' : ''}`} />
+          {cargando ? 'Cargando...' : 'Sincronizar'}
         </button>
 
-        {/* User profile */}
-        <div className="flex items-center gap-3 pl-2 border-l border-slate-800">
-          <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 font-bold text-xs">
-            {usuarioActual?.email ? usuarioActual.email.substring(0, 2).toUpperCase() : 'OP'}
-          </div>
-          <div className="text-left hidden sm:block">
-            <div className="text-xs font-semibold text-slate-200 truncate max-w-[140px]">
-              {usuarioActual?.email || 'Usuario Operativo'}
-            </div>
-            <div className="flex items-center gap-1 text-[10px] text-slate-400">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>Rol: {usuarioActual?.rol || 'admin'}</span>
-            </div>
-          </div>
-        </div>
+        {/* Save Button */}
+        <button
+          data-act="guardar"
+          style={{
+            padding: '7px 13px',
+            border: 0,
+            borderRadius: '5px',
+            background: '#22375c',
+            color: '#fff',
+            font: "600 12px 'IBM Plex Sans'",
+            whiteSpace: 'nowrap',
+            cursor: 'pointer'
+          }}
+        >
+          Guardar
+        </button>
       </div>
-    </header>
+    </div>
   );
 };
